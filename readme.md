@@ -17,3 +17,14 @@ It means that both the publisher and subscriber connect to the **same RabbitMQ m
 ### Running RabbitMQ as message broker
 
 ![RabbitMQ Management UI](assets/rabbitmq.png)
+
+### Program Outputs
+
+**Subscriber Terminal:**
+![Subscriber Output](assets/cargo-run-subscriber.png)
+
+**Publisher Terminal:**
+![Publisher Output](assets/cargo-run-publisher.png)
+
+**What is happening:**  
+When we run `cargo run` in the publisher directory, the publisher program connects to the RabbitMQ broker and pushes 5 `UserCreatedEventMessage` events into the `user_created` queue. The subscriber program listens to this same queue, so it immediately pulls these 5 messages from the broker and prints them to its console. This sequence shows the essence of event-driven architecture: the publisher and subscriber are independent processes, but they can easily communicate in real-time by sending messages through the RabbitMQ broker.

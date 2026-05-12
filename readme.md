@@ -27,4 +27,11 @@ It means that both the publisher and subscriber connect to the **same RabbitMQ m
 ![Publisher Output](assets/cargo-run-publisher.png)
 
 **What is happening:**  
-When we run `cargo run` in the publisher directory, the publisher program connects to the RabbitMQ broker and pushes 5 `UserCreatedEventMessage` events into the `user_created` queue. The subscriber program listens to this same queue, so it immediately pulls these 5 messages from the broker and prints them to its console. This sequence shows the essence of event-driven architecture: the publisher and subscriber are independent processes, but they can easily communicate in real-time by sending messages through the RabbitMQ broker.
+When we run `cargo run` in the publisher directory, the publisher program connects to the RabbitMQ broker and pushes 5 `UserCreatedEventMessage` events into the `user_created` queue. Because the subscriber program is actively listening to this exact same queue, it instantly pulls these 5 messages from the broker and prints them to its console. This sequence demonstrates the core of event-driven architecture: the publisher and subscriber are completely independent processes, but they can seamlessly communicate in real-time by passing messages through the RabbitMQ broker.
+
+### Simulating a Slow Subscriber
+
+![RabbitMQ Queued Messages Spike](assets/rabbitmq-performance.png)
+
+**Why does the spike happen?**
+By adding a 1-second `thread::sleep` delay into the subscriber, we artificially slowed down its processing speed. When we rapidly ran the publisher multiple times, we instantly flooded the message broker with dozens of events. Because the publisher's speed far exceeded the subscriber's processing rate (1 message/second), the RabbitMQ message broker had to hold those unprocessed messages in the queue, creating a massive spike on the "Queued messages" chart. The line then slowly slopes downward as the slow subscriber gradually works through the backlog, one message at a time. This perfectly illustrates why message queues are so useful: they act as a buffer to prevent a slow consumer from crashing under the pressure of a high-speed producer!
